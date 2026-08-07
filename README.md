@@ -16,6 +16,7 @@ We address these as follows:
 
 ## Install
 
+See https://ankiweb.net/shared/info/678172946.
 
 ## Copying
 
