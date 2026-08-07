@@ -10,7 +10,7 @@ There are several of these already at time of creation, but they have some probl
 
 We address these as follows:
 
-1. This add-on simply highlights the accented mora, eg. the accent of 柊 displays as <strong style="text-decoration: underline;">ひ</strong>いらぎ. Flat words display in italics so you don't have to hunt for an accented mora if there aren't any.
+1. This add-on simply highlights the accented mora, eg. the accent of 柊 displays as <ins><strong>ひ</strong></ins>いらぎ. Flat words display in italics so you don't have to hunt for an accented mora if there aren't any.
 2. The AnkiWeb version of this add-on currently uses the [Kanjium accent data](https://github.com/mifunetoshiro/kanjium/blob/master/data/source_files/raw/accents.txt). This data also has some problems, such as ambiguity in what accent data with commas represents, but we have responded by not including any ambiguous cases. As far as we know, the data which *is* unambiguously parseable is generally correct and the best available. Open an issue if you can suggest better or supplementary accent data!
 3. This add-on can parse square bracket furigana notation *or* get the reading from a separate field.
 
