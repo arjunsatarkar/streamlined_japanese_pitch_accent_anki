@@ -19,8 +19,10 @@ def main():
             try:
                 kanjium_accents[(row[0], row[1])] = int(row[2])
             except ValueError:
-                # Can't parse if there are multiple accents but it's fine for now
-                # That only applies to multi-word phrases
+                # Can't parse if there are multiple accents (unavoidable)
+                # In the kanjium data it's ambiguous whether those are multiple accepted
+                # variants, or a phrase with multiple accent patterns.
+                # See https://github.com/mifunetoshiro/kanjium/issues/14
                 continue
 
     conn = sqlite3.connect("data/pitch_accents.sqlite", autocommit=False)
