@@ -8,6 +8,7 @@ import csv
 
 KANJIUM_SOURCE_PATH = "data/kanjium_accents.txt"
 
+
 def main():
     kanjium_accents = {}
 
@@ -21,7 +22,6 @@ def main():
                 # Can't parse if there are multiple accents but it's fine for now
                 # That only applies to multi-word phrases
                 continue
-
 
     conn = sqlite3.connect("data/pitch_accents.sqlite", autocommit=False)
     try:
@@ -37,11 +37,15 @@ def main():
             """)
             conn.executemany(
                 "INSERT OR IGNORE INTO expression_reading_accent(expression, reading, accent) VALUES (?, ?, ?);",
-                ((expression, reading, accent) for ((expression, reading), accent) in kanjium_accents.items()),
+                (
+                    (expression, reading, accent)
+                    for ((expression, reading), accent) in kanjium_accents.items()
+                ),
             )
             conn.execute("ANALYZE;")
     finally:
         conn.close()
-        
+
+
 if __name__ == "__main__":
     main()
