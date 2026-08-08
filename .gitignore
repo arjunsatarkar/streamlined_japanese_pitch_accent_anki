@@ -1,3 +1,4 @@
 __pycache__/
 /addon/pitch_accents.sqlite
+/addon/meta.json
 /streamlined_japanese_pitch_accent.ankiaddon
