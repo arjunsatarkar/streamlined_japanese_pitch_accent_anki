@@ -1,3 +1,5 @@
+import pathlib
+import sqlite3
 import unicodedata
 
 # See https://en.wikipedia.org/wiki/Tag_URI_scheme. (Global uniqueness.)
@@ -5,6 +7,12 @@ PITCH_ACCENT_FIELD_START = (
     "<!--tag:arjunsatarkar.net,2026:streamlined_japanese_pitch_accent_auto_added-->"
 )
 PITCH_ACCENT_FIELD_END = PITCH_ACCENT_FIELD_START
+
+
+def get_conn() -> sqlite3.Connection:
+    return sqlite3.connect(
+        pathlib.Path(__file__).parent / "pitch_accents.sqlite", autocommit=False
+    )
 
 
 def parse_furigana(s: str):

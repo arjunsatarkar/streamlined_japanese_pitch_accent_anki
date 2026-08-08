@@ -2,11 +2,9 @@ from aqt import gui_hooks
 from aqt import mw
 from aqt.browser import Browser
 from aqt.qt import *
-import aqt.operations.note
 from aqt.utils import chooseList, getText, showInfo, showText, qconnect
+import aqt.operations.note
 import os
-import pathlib
-import sqlite3
 
 from . import utils
 
@@ -42,12 +40,6 @@ def about() -> None:
     )
 
 
-def get_conn() -> sqlite3.Connection:
-    return sqlite3.connect(
-        pathlib.Path(__file__).parent / "pitch_accents.sqlite", autocommit=False
-    )
-
-
 def add_pitch_accent(browser: Browser) -> None:
     notes = [mw.col.get_note(note_id) for note_id in browser.selected_notes()]
     if len(set(note.mid for note in notes)) != 1:
@@ -72,7 +64,7 @@ def add_pitch_accent(browser: Browser) -> None:
         field_names,
     )
 
-    conn = get_conn()
+    conn = utils.get_conn()
     added = 0
     skipped_not_found = 0
     skipped_field_not_empty = 0
