@@ -44,7 +44,8 @@ def add_pitch_accent(browser: Browser) -> None:
     notes = [mw.col.get_note(note_id) for note_id in browser.selected_notes()]
     if len(set(note.mid for note in notes)) != 1:
         showInfo(
-            "Can only add pitch accent to one note type at a time; select cards of the same note type"
+            "Can only add pitch accent to one note type at a time; select cards of the same note type",
+            parent=browser,
         )
         return
     field_names = [field["name"] for field in notes[0].note_type()["flds"]]
@@ -103,7 +104,8 @@ def add_pitch_accent(browser: Browser) -> None:
             lambda _: showInfo(
                 f"Added accents to {added} notes, skipped {skipped_not_found} because the expression-reading"
                 f" combination was not found and {skipped_field_not_empty} because the field was not empty"
-                f" (skipped {skipped_not_found + skipped_field_not_empty} in total)."
+                f" (skipped {skipped_not_found + skipped_field_not_empty} in total).",
+                parent=browser,
             )
         ).run_in_background()
     finally:
@@ -114,28 +116,33 @@ def add_manual_pitch_accent(browser: Browser) -> None:
     notes = [mw.col.get_note(note_id) for note_id in browser.selected_notes()]
     if len(notes) > 1:
         showInfo(
-            "Can only manually add pitch accent info to one note at a time; select just one."
+            "Can only manually add pitch accent info to one note at a time; select just one.",
+            parent=browser,
         )
         return
     note = notes[0]
-    reading, _ = getText("Enter the reading in kana.")
+    reading, _ = getText("Enter the reading in kana.", parent=browser)
     if not reading:
-        showInfo("Reading not provided; doing nothing for now.")
+        showInfo("Reading not provided; doing nothing for now.", parent=browser)
         return
-    accented_mora, _ = getText("Enter the number of the accented mora (0 for heiban).")
+    accented_mora, _ = getText(
+        "Enter the number of the accented mora (0 for heiban).", parent=browser
+    )
     try:
         accented_mora = int(accented_mora)
         if accented_mora < 0:
             raise ValueError
     except ValueError:
         showInfo(
-            "The accented mora should be a positive integer number; doing nothing for now."
+            "The accented mora should be a positive integer number; doing nothing for now.",
+            parent=browser,
         )
         return
     field_names = [field["name"] for field in note.note_type()["flds"]]
     pitch_accent_index = chooseList(
         "Where should the pitch accent go? (In manual mode, this field will be overwritten if not empty!)",
         field_names,
+        parent=browser,
     )
     note[field_names[pitch_accent_index]] = utils.render_accent(
         reading, accented_mora, auto_added=False
@@ -147,7 +154,8 @@ def remove_pitch_accent(browser: Browser) -> None:
     notes = [mw.col.get_note(note_id) for note_id in browser.selected_notes()]
     if len(set(note.mid for note in notes)) != 1:
         showInfo(
-            "Can only remove pitch accent from one note type at a time; select cards of the same note type"
+            "Can only remove pitch accent from one note type at a time; select cards of the same note type.",
+            parent=browser,
         )
         return
     field_names = [field["name"] for field in notes[0].note_type()["flds"]]
@@ -169,7 +177,8 @@ def remove_pitch_accent(browser: Browser) -> None:
             skipped += 1
     aqt.operations.note.update_notes(parent=browser, notes=notes).success(
         lambda _: showInfo(
-            f"Removed accents from {removed_from} notes, skipped {skipped} notes."
+            f"Removed accents from {removed_from} notes, skipped {skipped} notes.",
+            parent=browser,
         )
     ).run_in_background()
 
