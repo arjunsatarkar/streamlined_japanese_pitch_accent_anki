@@ -48,7 +48,9 @@ def add_pitch_accent(browser: Browser) -> None:
         )
         return
     field_names = [field["name"] for field in notes[0].note_type()["flds"]]
-    jp_exp_index = chooseList("Where is the Japanese expression?", field_names)
+    jp_exp_index = chooseList(
+        "Where is the Japanese expression?", field_names, parent=browser
+    )
     reading_index = (
         chooseList(
             "Where is the reading?",
@@ -56,12 +58,14 @@ def add_pitch_accent(browser: Browser) -> None:
                 "❕ It is Anki-style (square-bracket []) furigana alongside the expression itself"
             ]
             + field_names,
+            parent=browser,
         )
         - 1
     )
     pitch_accent_index = chooseList(
         "Where should the pitch accent go? (The note will be skipped if this field is not empty.)",
         field_names,
+        parent=browser,
     )
 
     conn = utils.get_conn()
@@ -150,6 +154,7 @@ def remove_pitch_accent(browser: Browser) -> None:
     pitch_accent_index = chooseList(
         "Which field to remove pitch accent from? (This will only affect fields populated automatically by this add-on.)",
         field_names,
+        parent=browser,
     )
 
     removed_from = 0
