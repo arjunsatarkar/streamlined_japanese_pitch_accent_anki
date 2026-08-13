@@ -15,7 +15,10 @@ def main():
 
     with open("data/kanjium_accents.txt") as kanjium_file:
         with open("data/extra_data.tsv") as extra_file:
-            rows = itertools.chain(csv.reader(kanjium_file, delimiter="\t"), csv.reader(extra_file, delimiter="\t"))
+            rows = itertools.chain(
+                csv.reader(kanjium_file, delimiter="\t"),
+                csv.reader(extra_file, delimiter="\t"),
+            )
             for row in rows:
                 try:
                     accents[(row[0], row[1])] = int(row[2])

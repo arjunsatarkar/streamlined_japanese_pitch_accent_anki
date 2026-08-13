@@ -7,6 +7,7 @@ import aqt.operations.note
 import os
 
 from . import utils
+from . import configuration
 
 
 def about() -> None:
@@ -48,10 +49,25 @@ def add_pitch_accent(browser: Browser) -> None:
             parent=browser,
         )
         return
+    note_type_id = notes[0].mid
+
+    config = configuration.Config()
+
     field_names = [field["name"] for field in notes[0].note_type()["flds"]]
     jp_exp_index = chooseList(
-        "Where is the Japanese expression?", field_names, parent=browser
+        "Where is the Japanese expression?",
+        field_names,
+        startrow=config.get_last_used_field_idx(
+            note_type_id, configuration.FieldPurpose.JAPANESE_EXPRESSION, field_names
+        ),
+        parent=browser,
     )
+    config.set_last_used_field_name(
+        note_type_id,
+        configuration.FieldPurpose.JAPANESE_EXPRESSION,
+        field_names[jp_exp_index],
+    )
+
     reading_index = (
         chooseList(
             "Where is the reading?",
@@ -59,14 +75,35 @@ def add_pitch_accent(browser: Browser) -> None:
                 "❕ It is Anki-style (square-bracket []) furigana alongside the expression itself"
             ]
             + field_names,
+            startrow=config.get_last_used_field_idx(
+                note_type_id, configuration.FieldPurpose.READING, field_names
+            )
+            + 1,
             parent=browser,
         )
         - 1
     )
+    if reading_index >= 0:
+        config.set_last_used_field_name(
+            note_type_id, configuration.FieldPurpose.READING, field_names[reading_index]
+        )
+    else:
+        config.clear_last_used_field_name(
+            note_type_id, configuration.FieldPurpose.READING
+        )
+
     pitch_accent_index = chooseList(
         "Where should the pitch accent go? (The note will be skipped if this field is not empty.)",
         field_names,
+        startrow=config.get_last_used_field_idx(
+            note_type_id, configuration.FieldPurpose.PITCH_ACCENT, field_names
+        ),
         parent=browser,
+    )
+    config.set_last_used_field_name(
+        note_type_id,
+        configuration.FieldPurpose.PITCH_ACCENT,
+        field_names[pitch_accent_index],
     )
 
     conn = utils.get_conn()
