@@ -1,2 +1,4 @@
 *
 !.gitignore
+!README.txt
+!extra_data.tsv

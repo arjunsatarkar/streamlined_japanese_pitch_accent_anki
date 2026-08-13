@@ -85,7 +85,7 @@ def render_accent(reading: str, accented_mora: int, auto_added: bool = True) -> 
         if in_accented_mora:
             result += "</strong>"
     else:
-        result = f"<i>{reading}</i>"
+        result = f"<span style='text-decoration: overline;'>{reading}</span>"
     if auto_added:
         result = f"{PITCH_ACCENT_FIELD_START}{result}{PITCH_ACCENT_FIELD_END}"
     return result

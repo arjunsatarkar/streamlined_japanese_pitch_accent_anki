@@ -3,27 +3,28 @@
 # requires-python = ">=3.13"
 # dependencies = []
 # ///
-import sqlite3
 import csv
+import itertools
+import sqlite3
 
 KANJIUM_SOURCE_PATH = "data/kanjium_accents.txt"
 
 
 def main():
-    kanjium_accents = {}
+    accents = {}
 
-    # Kanjium - should be more reliable
-    with open("data/kanjium_accents.txt") as f:
-        kanjium_rows = csv.reader(f, delimiter="\t")
-        for row in kanjium_rows:
-            try:
-                kanjium_accents[(row[0], row[1])] = int(row[2])
-            except ValueError:
-                # Can't parse if there are multiple accents (unavoidable)
-                # In the kanjium data it's ambiguous whether those are multiple accepted
-                # variants, or a phrase with multiple accent patterns.
-                # See https://github.com/mifunetoshiro/kanjium/issues/14
-                continue
+    with open("data/kanjium_accents.txt") as kanjium_file:
+        with open("data/extra_data.tsv") as extra_file:
+            rows = itertools.chain(csv.reader(kanjium_file, delimiter="\t"), csv.reader(extra_file, delimiter="\t"))
+            for row in rows:
+                try:
+                    accents[(row[0], row[1])] = int(row[2])
+                except ValueError:
+                    # Can't parse if there are multiple accents (unavoidable)
+                    # In the kanjium data it's ambiguous whether those are multiple accepted
+                    # variants, or a phrase with multiple accent patterns.
+                    # See https://github.com/mifunetoshiro/kanjium/issues/14
+                    continue
 
     conn = sqlite3.connect("data/pitch_accents.sqlite", autocommit=False)
     try:
@@ -41,7 +42,7 @@ def main():
                 "INSERT OR IGNORE INTO expression_reading_accent(expression, reading, accent) VALUES (?, ?, ?);",
                 (
                     (expression, reading, accent)
-                    for ((expression, reading), accent) in kanjium_accents.items()
+                    for ((expression, reading), accent) in accents.items()
                 ),
             )
             conn.execute("ANALYZE;")
