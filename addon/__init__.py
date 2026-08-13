@@ -49,8 +49,8 @@ def add_pitch_accent(browser: Browser) -> None:
             parent=browser,
         )
         return
-    note_type_id = notes[0].mid
 
+    note_type_id = notes[0].mid
     config = configuration.Config()
 
     field_names = [field["name"] for field in notes[0].note_type()["flds"]]
@@ -157,7 +157,10 @@ def add_manual_pitch_accent(browser: Browser) -> None:
             parent=browser,
         )
         return
+
     note = notes[0]
+    config = configuration.Config()
+
     reading, _ = getText("Enter the reading in kana.", parent=browser)
     if not reading:
         showInfo("Reading not provided; doing nothing for now.", parent=browser)
@@ -179,8 +182,17 @@ def add_manual_pitch_accent(browser: Browser) -> None:
     pitch_accent_index = chooseList(
         "Where should the pitch accent go? (In manual mode, this field will be overwritten if not empty!)",
         field_names,
+        startrow=config.get_last_used_field_idx(
+            note.mid, configuration.FieldPurpose.PITCH_ACCENT, field_names
+        ),
         parent=browser,
     )
+    config.set_last_used_field_name(
+        note.mid,
+        configuration.FieldPurpose.PITCH_ACCENT,
+        field_names[pitch_accent_index],
+    )
+
     note[field_names[pitch_accent_index]] = utils.render_accent(
         reading, accented_mora, auto_added=False
     )
@@ -195,10 +207,17 @@ def remove_pitch_accent(browser: Browser) -> None:
             parent=browser,
         )
         return
+
+    note_type_id = notes[0].mid
+    config = configuration.Config()
+
     field_names = [field["name"] for field in notes[0].note_type()["flds"]]
     pitch_accent_index = chooseList(
         "Which field to remove pitch accent from? (This will only affect fields populated automatically by this add-on.)",
         field_names,
+        startrow=config.get_last_used_field_idx(
+            note_type_id, configuration.FieldPurpose.PITCH_ACCENT, field_names
+        ),
         parent=browser,
     )
 
